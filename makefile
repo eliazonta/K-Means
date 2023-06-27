@@ -2,7 +2,8 @@ CC := g++
 SRC := $(wildcard *.cpp)
 OBJ := $(SRC:.cpp=.o)
 NAME := K-means3D
-
+BIN := bin
+OBJ_FOLDER := obj
 #=====================
 
 all : $(NAME)
@@ -14,5 +15,6 @@ $(NAME) : $(OBJ)
 	$(CC)  -c $< -o $@
 
 clean :
-	rm -f $(OBJ)
+	rm -f $(OBJ) $(BIN) $(NAME)
+
 
