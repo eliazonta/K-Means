@@ -11,7 +11,7 @@
 
 void KMeans(std::vector<Point>* p,int epochs, int k){
     std::vector<Point> centroids(k);
-    std::srand(std::time(nullptr));
+    std::srand(time(nullptr));
     std::vector<int> npts(p->size());
     std::vector<double> sx(k), sy(k), sz(k);
 
