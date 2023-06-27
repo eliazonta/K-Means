@@ -5,7 +5,7 @@
 #include <sstream>
 #include <vector>
 
-#include "Point.hpp"
+#include "Point.h"
 
 std::vector<Point> readCsv(std::string path);
 void writeCsv(std::vector<Point>* p, std::string s);

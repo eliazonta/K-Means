@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Point.hpp"
+#include "../include/Point.h"
 
 Point::Point():
     x(0), y(0), z(0), k(-1), minDist(__DBL_MAX__){}

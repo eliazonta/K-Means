@@ -1,4 +1,4 @@
-#include "readWrite.hpp"
+#include "../include/readWrite.h"
 
 std::vector<Point> readCsv(std::string path){
     std::vector<Point> points;
