@@ -9,7 +9,7 @@
 
 int main(int argc, char** argv){
     if(argc != 4){
-        std::cout << "Usage ./K-Means <dataset path> <N epochs> <K clusters>" << std::endl;
+        std::cout << "Usage " << argv[0] << " <dataset path> <N epochs> <K clusters>" << std::endl;
         exit(-1);
     }else{
         std::string path = argv[1];
