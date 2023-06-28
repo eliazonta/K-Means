@@ -1,5 +1,6 @@
 #include <time.h>
 #include <iostream>
+#include <chrono>
 
 int time(int argc, char** argv){
     clock_t start = clock();
