@@ -11,7 +11,7 @@
 // #define DEBUG
 
 void KMeans(std::vector<Point>* p,int epochs, int k){
-    std::vector<Point> centroids(k);
+    std::vector<Point> centroids;
     std::srand(time(nullptr));
     std::vector<int> npts(p->size());
     std::vector<double> sx(k), sy(k), sz(k);
@@ -44,7 +44,7 @@ void KMeans(std::vector<Point>* p,int epochs, int k){
                     p->at(j).setMinDist(dist);
                     p->at(j).setK(i);
                     #ifdef DEBUG
-                    std::cout<<"Point N: [" << j  << "] "<< "re-assigned at K: [" << p->at(j).getK()<< "]" <<std::endl; 
+                    std::cout<<"Point N: [" << j  << "] "<< "re-assigned at K: [" << p->at(j).getK() << "]" <<std::endl; 
                     #endif
                 }
             }

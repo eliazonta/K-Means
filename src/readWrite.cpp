@@ -21,7 +21,8 @@ std::vector<Point> readCsv(std::string path){
 }
 
 void writeCsv(std::vector<Point>* p, std::string s){
-    std::ofstream file(s);
+    std::ofstream file;
+    file.open(s);
     file << "x, y, z, K" << std::endl;
     for (std::vector<Point>::iterator it = p->begin(); it != p->end(); ++it) {
         file << it->getX() << ", " << it->getY() << ", " << it->getZ() <<", " << it->getK() << std::endl;

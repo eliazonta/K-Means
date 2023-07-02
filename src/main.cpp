@@ -1,5 +1,5 @@
 #include <iostream>
-#include <ctime>
+#include <time.h>
 #include <vector>
 #include <string>
 
@@ -16,6 +16,7 @@ int main(int argc, char** argv){
         int epochs = atoi(argv[2]);
         int clusters = atoi(argv[3]);
         std::vector<Point> points = readCsv(path);
+        clock_t start = clock();
         try
         {
             KMeans(&points, epochs, clusters);
@@ -25,6 +26,12 @@ int main(int argc, char** argv){
             std::cerr << e.what() << '\n';
             return EXIT_FAILURE;
         }
+        clock_t stop = clock();
+        clock_t elapsed = (((float)(stop - start)) / CLOCKS_PER_SEC) * 1000; // ms
+        std::cout<< "[ K-Means clustering algorithm ]" << std::endl;
+        std::cout<< "-> Details : data [ " << path << "] | " << epochs << " epochs | " 
+                << clusters << " clusters;" << std::endl;
+        std::cout << "Sequential running time : "<< elapsed << " ms" << std::endl;
         writeCsv(&points, "data/out.csv");
     }
     return EXIT_SUCCESS;
