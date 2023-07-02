@@ -8,7 +8,9 @@
 */
 
 #include "../include/k-means.h"
+#include <omp.h>
 // #define DEBUG
+#define OMP
 
 void KMeans(std::vector<Point>* p,int epochs, int k){
     std::vector<Point> centroids;
@@ -19,6 +21,10 @@ void KMeans(std::vector<Point>* p,int epochs, int k){
         std::cout << "=== DEBUG ===" << std::endl;
     #endif
     // init clusters with some random point
+    #ifdef OMP
+    omp_set_num_threads(k);
+    #pragma omp parallel for 
+    #endif
     for(size_t i = 0; i < k; i++){
         centroids.push_back(p->at(rand() % p->size()));
         npts.at(i) = 0;  
@@ -28,11 +34,20 @@ void KMeans(std::vector<Point>* p,int epochs, int k){
     }
     for(size_t it = 0; it < epochs; ++it)
     {
+        #ifdef DEBUG
+        std::cout << "epoch - " << it << "/" << epochs << std::endl; 
+        #endif
         // assign pts to a cluster
+        #ifdef OMP
+        #pragma omp parallel for 
+        #endif
         for(size_t i = 0; i < centroids.size(); ++i)
         {
             #ifdef DEBUG
             std::cout<<"centroid N: [" << i << "]" << std::endl; 
+            #endif
+            #ifdef OMP
+            #pragma omp parallel for 
             #endif
             for(size_t j = 0;j < p->size(); ++j)
             {
