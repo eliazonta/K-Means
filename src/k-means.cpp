@@ -10,7 +10,7 @@
 #include "../include/k-means.h"
 #include <omp.h>
 // #define DEBUG
-#define OMP
+// #define OMP
 
 void KMeans(std::vector<Point>* p,int epochs, int k){
     std::vector<Point> centroids;
@@ -80,6 +80,7 @@ void KMeans(std::vector<Point>* p,int epochs, int k){
             centroids.at(i).setX(sx[i] / npts[i]);
             centroids.at(i).setY(sy[i] / npts[i]);
             centroids.at(i).setZ(sz[i] / npts[i]);
+            centroids.at(i).setK(i);
         }
     }
     writeCsv(&centroids, "data/centroids.csv");
