@@ -22,7 +22,8 @@ void KMeans(std::vector<Point>* p,int epochs, int k){
     #endif
     // init clusters with some random point
     #ifdef OMP
-    omp_set_num_threads(k);
+    // omp_set_num_threads(k);
+    #pragma omp num_threads(k)
     #pragma omp parallel for 
     #endif
     for(size_t i = 0; i < k; i++){
@@ -39,7 +40,8 @@ void KMeans(std::vector<Point>* p,int epochs, int k){
         #endif
         // assign pts to a cluster
         #ifdef OMP
-        #pragma omp parallel for 
+	// fix different directive needed
+        // #pragma omp parallel for 
         #endif
         for(size_t i = 0; i < centroids.size(); ++i)
         {
