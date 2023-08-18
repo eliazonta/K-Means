@@ -10,13 +10,13 @@
 #include "../include/k-means.h"
 #include <omp.h>
 // #define DEBUG
-// #define OMP
+//#define OMP
 
 void KMeans(std::vector<Point>* p,int epochs, int k){
     std::vector<Point> centroids;
     std::srand(time(nullptr));
     std::vector<int> npts(p->size());
-    std::vector<double> sx(k), sy(k), sz(k);
+    std::vector<double> sx(k), sy(k), sz(k);    //cumulative x, y, x 
     #ifdef DEBUG
         std::cout << "=== DEBUG ===" << std::endl;
     #endif
@@ -24,6 +24,9 @@ void KMeans(std::vector<Point>* p,int epochs, int k){
     #ifdef OMP
     // omp_set_num_threads(k);
     #pragma omp num_threads(k)
+	#ifdef DEBUG
+		std::cout << "N threads : [" << omp_get_num_threads() << std::cout << "]\n"; 
+	#endif
     #pragma omp parallel for 
     #endif
     for(size_t i = 0; i < k; i++){
@@ -39,17 +42,14 @@ void KMeans(std::vector<Point>* p,int epochs, int k){
         std::cout << "epoch - " << it << "/" << epochs << std::endl; 
         #endif
         // assign pts to a cluster
+		size_t j;
         #ifdef OMP
-	// fix different directive needed
-        // #pragma omp parallel for 
+        #pragma omp parallel for private(j) 
         #endif
         for(size_t i = 0; i < centroids.size(); ++i)
         {
             #ifdef DEBUG
             std::cout<<"centroid N: [" << i << "]" << std::endl; 
-            #endif
-            #ifdef OMP
-            #pragma omp parallel for 
             #endif
             for(size_t j = 0;j < p->size(); ++j)
             {
@@ -77,6 +77,14 @@ void KMeans(std::vector<Point>* p,int epochs, int k){
             p->at(i).setMinDist(__DBL_MAX__); // reset
         }
         //compute new centroids
+		#ifdef OMP
+		omp_set_num_threads(centroids.size());
+		int cthreads = omp_get_num_threads();
+		#ifdef DEBUG
+		std::cout << "N cthreads : [" << cthreads << std::cout << "]\n";
+		#endif
+		#pragma omp parallel for 
+		#endif
         for(size_t i = 0;i < centroids.size(); ++i)
         {
             centroids.at(i).setX(sx[i] / npts[i]);

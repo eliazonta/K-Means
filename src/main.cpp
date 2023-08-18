@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-#include "../include/Point.h"
+#include "../include/point.h"
 #include "../include/k-means.h"
 #include "../include/readWrite.h"
 
@@ -26,12 +26,12 @@ int main(int argc, char** argv){
             std::cerr << e.what() << '\n';
             return EXIT_FAILURE;
         }
-        clock_t stop = clock();
-        clock_t elapsed = (((float)(stop - start)) / CLOCKS_PER_SEC) * 1000; // ms
-        std::cout<< "[ K-Means clustering algorithm ]" << std::endl;
-        std::cout<< "-> Details : data [ " << path << "] | " << epochs << " epochs | " 
+		clock_t stop = clock();
+        clock_t elapsed = (((float)(stop - start)) / CLOCKS_PER_SEC) * 1000; // s
+        std::cout<< "[ K-Means clustering algorithm ]\n" <<
+        			"-> Details : data [ " << path << "] | " << epochs << " epochs | " 
                 << clusters << " clusters;" << std::endl;
-        std::cout << "Sequential running time : "<< elapsed << " ms" << std::endl;
+        std::cout << "Run time : "<< elapsed << " s" << std::endl;
         writeCsv(&points, "data/out.csv");
     }
     return EXIT_SUCCESS;

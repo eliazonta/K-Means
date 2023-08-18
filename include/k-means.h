@@ -2,7 +2,7 @@
 #define __KMEANS__
 
 #include <vector>
-#include "Point.h"
+#include "point.h"
 #include "readWrite.h"
 #include <iostream> // debug
 
