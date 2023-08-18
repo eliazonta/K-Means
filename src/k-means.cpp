@@ -25,7 +25,7 @@ void KMeans(std::vector<Point>* p,int epochs, int k){
     // omp_set_num_threads(k);
     #pragma omp num_threads(k)
 	#ifdef DEBUG
-		std::cout << "N threads : [" << omp_get_num_threads() << std::cout << "]\n"; 
+		std::cout << "N threads : [" << omp_get_num_threads() << "]\n"; 
 	#endif
     #pragma omp parallel for 
     #endif
