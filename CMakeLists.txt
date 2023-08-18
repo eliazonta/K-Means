@@ -12,7 +12,7 @@ endif()
 option(USE_OPENMP "Use OpenMP" ON)
 
 add_executable(K-Means src/main.cpp src/k-means.cpp
-        src/Point.cpp src/readWrite.cpp )
+        src/point.cpp src/readWrite.cpp )
         
 if(USE_OPENMP)
         find_package(OpenMP REQUIRED)
