@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: cmake CMakeLists.txt
-      run: cmake CMakeLists.txt
-    - name: make 
+    - name: clean
+      run: make clean
+    - name: make (run)
       run: make 
