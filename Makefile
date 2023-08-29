@@ -1,5 +1,6 @@
 CC := g++
 CFLAGS := -std=c++11 # -Wextra -Werror -Wall
+# OMPFLAGS := -fopenmp
 NAME := K-means3D
 BIN := bin
 OBJ_FOLDER := obj
@@ -17,7 +18,7 @@ $(OBJ_FOLDER)/point.o $(OBJ_FOLDER)/readWrite.o $(OBJ_FOLDER)/k-means.o $(OBJ_FO
 # Executable
 $(NAME) : $(OBJ_FOLDER)/point.o $(OBJ_FOLDER)/readWrite.o $(OBJ_FOLDER)/k-means.o $(OBJ_FOLDER)/main.o
 	@mkdir -p $(BIN)
-	$(CC) $(CFLAGS) $^ -o $(BIN)/$(NAME) 
+	$(CC) $(CFLAGS) $^ -o $(BIN)/$(NAME) $(OMPFLAGS) 
 
  clean :
 	rm -rf $(OBJ_FOLDER) $(BIN) $(NAME)
