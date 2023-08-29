@@ -5,11 +5,12 @@
 K-Means is a clustering algorithm that aims to partition *n* data points into *k* clusters
 
 ```shell
-cmake CMakeLists.txt
+make
 ```
 
+Usage:
 ```shell
-make
+./bin/K-means3D <dataset path> <N epochs> <K clusters>
 ```
 
 ### TODO LIST
