@@ -17,7 +17,8 @@ jobs:
       run: make clean
     - name: make (run)
       working-directory: ./
-      env: OMP_NUM_THREADS: 8
+      env: 
+          OMP_NUM_THREADS: 8
       run: |
         sudo apt-get update; sudo apt-get install -y libomp5 libomp-dev
         echo OMP_NUM_THREADS:$OMP_NUM_THREADS
