@@ -10,47 +10,47 @@
 #include "../include/k-means.h"
 #include <omp.h>
 // #define DEBUG
-//#define OMP
+
 
 void KMeans(std::vector<Point>* p,int epochs, int k){
     std::vector<Point> centroids;
     std::srand(time(nullptr));
-    std::vector<int> npts(p->size());
-    std::vector<double> sx(k), sy(k), sz(k);    //cumulative x, y, x 
+    std::vector<int> npts(k, 0);
+    std::vector<double> sx(k, 0.0), sy(k, 0.0), sz(k, 0.0);    //cumulative x, y, x
+
     #ifdef DEBUG
         std::cout << "=== DEBUG ===" << std::endl;
     #endif
+
     // init clusters with some random point
-    #ifdef OMP
     // omp_set_num_threads(k);
-    #pragma omp num_threads(k)
+    #pragma omp parallel num_threads(k)
+    {
 	#ifdef DEBUG
 		std::cout << "N threads : [" << omp_get_num_threads() << "]\n"; 
 	#endif
-    #pragma omp parallel for 
-    #endif
+    #pragma omp for 
     for(size_t i = 0; i < k; i++){
         centroids.push_back(p->at(rand() % p->size()));
-        npts.at(i) = 0;  
-        sx.at(i) = 0.0;
-        sy.at(i) = 0.0;
-        sz.at(i) = 0.0;
     }
+
     for(size_t it = 0; it < epochs; ++it)
     {
+
         #ifdef DEBUG
         std::cout << "epoch - " << it << "/" << epochs << std::endl; 
         #endif
+
         // assign pts to a cluster
 		size_t j;
-        #ifdef OMP
-        #pragma omp parallel for private(j) 
-        #endif
+        #pragma omp for private(j) 
         for(size_t i = 0; i < centroids.size(); ++i)
         {
+
             #ifdef DEBUG
             std::cout<<"centroid N: [" << i << "]" << std::endl; 
             #endif
+
             for(size_t j = 0;j < p->size(); ++j)
             {
                 #ifdef DEBUG
@@ -67,24 +67,30 @@ void KMeans(std::vector<Point>* p,int epochs, int k){
             }
         }
         // new centroids 
+        #pragma omp for
         for(size_t i = 0; i < p->size(); ++i)
         {
             size_t id = p->at(i).getK();
+            #pragma omp atomic
             npts[id]++;
+            #pragma omp atomic
             sx[id] += p->at(i).getX();
+            #pragma omp atomic
             sy[id] += p->at(i).getY();
+            #pragma omp atomic
             sz[id] += p->at(i).getZ();
             p->at(i).setMinDist(__DBL_MAX__); // reset
         }
+
         //compute new centroids
-		#ifdef OMP
 		omp_set_num_threads(centroids.size());
 		int cthreads = omp_get_num_threads();
+        
 		#ifdef DEBUG
 		std::cout << "N cthreads : [" << cthreads << std::cout << "]\n";
 		#endif
-		#pragma omp parallel for 
-		#endif
+
+		#pragma omp for 
         for(size_t i = 0;i < centroids.size(); ++i)
         {
             centroids.at(i).setX(sx[i] / npts[i]);
@@ -92,6 +98,7 @@ void KMeans(std::vector<Point>* p,int epochs, int k){
             centroids.at(i).setZ(sz[i] / npts[i]);
             centroids.at(i).setK(i);
         }
+    }
     }
     writeCsv(&centroids, "data/centroids.csv");
 }
