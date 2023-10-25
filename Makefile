@@ -1,6 +1,6 @@
 CC := g++
 CFLAGS := -std=c++11 # -Wextra -Werror -Wall
-# OMPFLAGS := -fopenmp
+OMPFLAGS := -fopenmp
 NAME := K-Means3D
 BIN := bin
 OBJ_FOLDER := obj
