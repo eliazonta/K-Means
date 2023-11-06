@@ -7,18 +7,18 @@ Point::Point():
 Point::Point(double x, double y, double z):
     x(x), y(y),z(z), k(-1), minDist(__DBL_MAX__){}
 
-double Point::getX(){return x;}
-double Point::getY(){return y;}
-double Point::getZ(){return z;}
-int Point::getK(){return k;}
+double Point::X(){return x;}
+double Point::Y(){return y;}
+double Point::Z(){return z;}
+int Point::K(){return k;}
 double Point::getMinDist(){return minDist;}
 
-void Point::setX(int _x){x = _x;}
-void Point::setY(int _y){y = _y;}
-void Point::setZ(int _z){z = _z;}
-void Point::setK(int _k){k = _k;}
+void Point::X(int _x){x = _x;}
+void Point::Y(int _y){y = _y;}
+void Point::Z(int _z){z = _z;}
+void Point::K(int _k){k = _k;}
 void Point::setMinDist(double md){minDist = md;}
 
 double Point::dist(Point p){
-    return sqrt(pow(p.getX() - x, 2) + pow(p.getY() - y, 2) + pow(p.getZ() - z, 2));
+    return sqrt(pow(p.X() - x, 2) + pow(p.X() - y, 2) + pow(p.X() - z, 2));
 }

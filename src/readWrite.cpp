@@ -25,7 +25,7 @@ void writeCsv(std::vector<Point>* p, std::string s){
     file.open(s);
     file << "x, y, z, K" << std::endl;
     for (std::vector<Point>::iterator it = p->begin(); it != p->end(); ++it) {
-        file << it->getX() << ", " << it->getY() << ", " << it->getZ() <<", " << it->getK() << std::endl;
+        file << it->X() << ", " << it->Y() << ", " << it->Z() <<", " << it->K() << std::endl;
     }
     file.close();
 }

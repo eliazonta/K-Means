@@ -59,7 +59,7 @@ void KMeans(std::vector<Point>* p,int epochs, int k){
                 double dist = p->at(j).dist(centroids.at(i));
                 if(dist < p->at(j).getMinDist()){
                     p->at(j).setMinDist(dist);
-                    p->at(j).setK(i);
+                    p->at(j).K(i);
                     #ifdef DEBUG
                     std::cout<<"Point N: [" << j  << "] "<< "re-assigned at K: [" << p->at(j).getK() << "]" <<std::endl; 
                     #endif
@@ -70,15 +70,15 @@ void KMeans(std::vector<Point>* p,int epochs, int k){
         #pragma omp for
         for(size_t i = 0; i < p->size(); ++i)
         {
-            size_t id = p->at(i).getK();
+            size_t id = p->at(i).K();
             #pragma omp atomic
             npts[id]++;
             #pragma omp atomic
-            sx[id] += p->at(i).getX();
+            sx[id] += p->at(i).X();
             #pragma omp atomic
-            sy[id] += p->at(i).getY();
+            sy[id] += p->at(i).Y();
             #pragma omp atomic
-            sz[id] += p->at(i).getZ();
+            sz[id] += p->at(i).Z();
             p->at(i).setMinDist(__DBL_MAX__); // reset
         }
 
@@ -93,10 +93,10 @@ void KMeans(std::vector<Point>* p,int epochs, int k){
 		#pragma omp for 
         for(size_t i = 0;i < centroids.size(); ++i)
         {
-            centroids.at(i).setX(sx[i] / npts[i]);
-            centroids.at(i).setY(sy[i] / npts[i]);
-            centroids.at(i).setZ(sz[i] / npts[i]);
-            centroids.at(i).setK(i);
+            centroids.at(i).X(sx[i] / npts[i]);
+            centroids.at(i).Y(sy[i] / npts[i]);
+            centroids.at(i).Z(sz[i] / npts[i]);
+            centroids.at(i).K(i);
         }
     }
     }

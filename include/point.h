@@ -11,16 +11,16 @@ public:
     Point();
     Point(double x, double y, double z);
 
-    double getX();
-    double getY();
-    double getZ();
-    int getK();
+    double X();
+    double Y();
+    double Z();
+    int K();
     double getMinDist();
 
-    void setX(int _x);
-    void setY(int _y);
-    void setZ(int _z);
-    void setK(int _k);
+    void X(int _x);
+    void Y(int _y);
+    void Z(int _z);
+    void K(int _k);
     void setMinDist(double md);
     
     double dist(Point p);
