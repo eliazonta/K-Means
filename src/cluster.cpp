@@ -12,11 +12,11 @@ Cluster::Cluster(const Cluster& c):
 
 
 
-void Cluster::assign(Point* p)
+void Cluster::assign(std::shared_ptr<std::vector<Point>> p, int i)
 {
-    p->setDist(p->dist(centroid));
-    p->setCluster(clusterID);
-    pts->push_back(*p);
+    p->at(i).dist(p->at(i).dist(centroid));
+    p->at(i).setCluster(clusterID);
+    // pts->push_back(p->at(i));
 }
 
 void Cluster::computeCentroid()

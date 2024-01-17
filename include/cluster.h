@@ -21,7 +21,7 @@ public:
     Cluster();
     Cluster(std::shared_ptr<std::vector<Point>> p);
     Cluster(const Cluster& c);
-    void assign(Point* p);
+    void assign(std::shared_ptr<std::vector<Point>> p, int);
     void computeCentroid();
     void clear(){pts->clear();}
     Point getCentroid(){return centroid;}

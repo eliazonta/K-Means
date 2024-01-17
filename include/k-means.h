@@ -16,7 +16,7 @@ private:
     std::shared_ptr<std::vector<Point>> pts; // Points
     std::vector<Cluster> clusters; // clusters.size = numClusters
     std::vector<int> prova;
-    void assign();
+    // void assign();
     void clearClusters();
     void computeCentroids();
     void write(std::string path);

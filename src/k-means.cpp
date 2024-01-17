@@ -15,24 +15,24 @@
 
 
 KMeans::KMeans(std::shared_ptr<std::vector<Point>> p, int _epochs, int _clusters):
-    pts(p), epochs(_epochs), numClusters(_clusters)
+    pts(p), epochs(_epochs), numClusters(_clusters), clusters(_clusters)
 {
     std::cout << "Constructor called" << std::endl;
+    // std::srand(time(nullptr));
+    // std::random_shuffle(pts->begin(), pts->end());
 
-    for(size_t i = 0; i < numClusters; ++i)
-    {
-        clusters.push_back(Cluster()); 
-    }
-    // clusters.reserve(numClusters);
 
+    // for(size_t i = 0; i < pts->size(); ++i)
+    // {
+    //     std::cout<< pts->at(i) << std::endl;
+    // }
+    
     if (!pts || pts->empty()) 
     {
         std::cerr << "Error: Null or empty vector passed to constructor." << std::endl;
         return;
     }
 
-    std::srand(time(nullptr));
-    // clusters.resize(numClusters, Cluster()); // segfault
     
     // for(size_t i = 0; i < numClusters; ++i)
     // {
@@ -40,42 +40,31 @@ KMeans::KMeans(std::shared_ptr<std::vector<Point>> p, int _epochs, int _clusters
     // }
 
     // random assign
-    int selection = pts->size() / numClusters;
     
-    if (selection == 0) 
+    // int selection = pts->size() / numClusters;
+    
+    // if (selection == 0) 
+    // {
+    //     std::cerr << "Error: Not enough points for the number of clusters." << std::endl;
+    //     return;
+    // }
+    int cl;
+    // #pragma omp parallel for
+    std::cout<< "Size of points: " << pts->size() << std::endl;
+    for(size_t i = 0; i < pts->size(); ++i)
     {
-        std::cerr << "Error: Not enough points for the number of clusters." << std::endl;
-        return;
+        cl = random() % numClusters;
+        std::cout << "Point " << i << " assigned to cluster " << cl << std::endl;
+        // clusters.at(cl).assign(pts, i);
+        pts->at(i).setCluster(cl);
     }
-    std::cout << "Cluster size: " << clusters.size() << std::endl;
-    std::cout << "Selection: " << selection  << "num pts :" << pts->size() << std::endl;
-    for(size_t i = 0; i < clusters.size(); ++i)
-    {
-        Cluster& currentCluster = clusters.at(i);
-        std::cout << currentCluster.getCentroid() << std::endl;
-
-        // for(size_t j = 0; j < pts->size(); ++j)
-        // {
-        //     if (j / selection < clusters.size())
-        //     {
-        //         // clusters.push_back(Cluster(i, {})); // segfalt
-        //         currentCluster.assign(&(pts->at(j / selection)));
-        //         std::cout << "Assigned point " << j << " to cluster " << i << std::endl;
-        //     }
-        //     else
-        //     {
-        //         std::cerr << "Error: Index out of bounds." << std::endl;
-        //         return;
-        //     }
-        // }
-        // clusters.at(i).computeCentroid();
-    }
+    // clusters.at(i).computeCentroid();
 }
 
 void KMeans::computeCentroids()
 {
     // #pragma omp parallel for
-    std::cout << "Cluster size " << clusters.size() << std::endl;
+    std::cout << "Centroids computing... \n Cluster size " << clusters.size() << std::endl;
     for(size_t i = 0; i < clusters.size(); ++i)
     {
         clusters.at(i).computeCentroid();
@@ -85,20 +74,21 @@ void KMeans::computeCentroids()
 
 
 
-void KMeans::assign()
-{
-    // #pragma omp parallel for
-    for(size_t i = 0; i < pts->size(); ++i)
-    {
-        for(size_t j = 0; j < clusters.size(); ++j)
-        {
-            double dist = pts->at(i).dist(clusters.at(j).getCentroid());
+// void KMeans::assign()
+// {
+//     // #pragma omp parallel for
+//     for(size_t i = 0; i < pts->size(); ++i)
+//     {
+//         for(size_t j = 0; j < clusters.size(); ++j)
+//         {
+//             double dist = pts->at(i).dist(clusters.at(j).getCentroid());
 
-            if(dist < pts->at(i).getDist())
-                clusters.at(j).assign(&pts->at(i));
-        }   
-    }
-}
+//             if(dist < pts->at(i).getDist())
+//                 // clusters.at(j).assign(pts->at(i));
+//                 pts->at(i).setCluster(j);
+//         }   
+//     }
+// }
 
 
 void KMeans::write(std::string path)
@@ -127,7 +117,7 @@ void KMeans::run()
     {
         std::cout<< "Epoch: " << it  << "/" << epochs << std::endl;
         
-        assign();
+        // assign();
         computeCentroids();
         clearClusters();
     }

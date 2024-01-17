@@ -48,7 +48,8 @@ void writeCsv(std::vector<Point>* p, std::string path)
     {
         std::cerr << "Error opening file: " << path << std::endl;
     }
-
+    std::cout<< "Writing to file " << path << std::endl;
+    
     for (std::vector<Point>::iterator it = p->begin(); it != p->end(); ++it) 
     {
         for(size_t i = 0; i < it->getFeatures().size(); ++i)
