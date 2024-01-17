@@ -1,29 +1,35 @@
+#pragma once
 #ifndef __POINT_H__
 #define __POINT_H__
+
 #include <math.h>
+#include <vector>
+#include <iostream>
 
 class Point{
 private:
-    double x, y, z;
-    int k;
-    double minDist;
+    int pointID, clusterID, dimensions;
+    double distance; // distance from centroid
+    std::vector<double> features; // point features [features.size = dimensions]
+    
 public:
     Point();
-    Point(double x, double y, double z);
+    Point(int pid);
+    Point(int pid, std::vector<double> f);
+    Point(const Point& p);
 
-    double X();
-    double Y();
-    double Z();
-    int K();
-    double getMinDist();
+    int getID(){return pointID;}
+    int getCluster(){return clusterID;}
+    double getDist(){return distance;}
+    double getDimensions(){return dimensions;}
+    std::vector<double> getFeatures(){return features;}
 
-    void X(int _x);
-    void Y(int _y);
-    void Z(int _z);
-    void K(int _k);
-    void setMinDist(double md);
-    
+    void setID(int pid){pointID = pid;}
+    void setCluster(int cid){clusterID = cid;}
+    void setDist(double dist){distance = dist;}
+
     double dist(Point p);
+    friend std::ostream& operator<<(std::ostream &os, const Point p);
 };
 
-#endif
+#endif // __POINT_H__

@@ -1,8 +1,10 @@
 /*
-    flow :
-    random clusters init
+    K-Means algorithm
+
+    - random centroids init
+
     for e in EPOCHS
-        assign points to clusters 
+        - assign points to clusters 
         compute centrods for each cluster
         update centroids 
 */
@@ -12,93 +14,123 @@
 // #define DEBUG
 
 
-void KMeans(std::vector<Point>* p,int epochs, int k){
-    std::vector<Point> centroids;
-    std::srand(time(nullptr));
-    std::vector<int> npts(k, 0);
-    std::vector<double> sx(k, 0.0), sy(k, 0.0), sz(k, 0.0);    //cumulative x, y, x
+KMeans::KMeans(std::shared_ptr<std::vector<Point>> p, int _epochs, int _clusters):
+    pts(p), epochs(_epochs), numClusters(_clusters)
+{
+    std::cout << "Constructor called" << std::endl;
 
-    #ifdef DEBUG
-        std::cout << "=== DEBUG ===" << std::endl;
-    #endif
-
-    // init clusters with some random point
-    // omp_set_num_threads(k);
-    #pragma omp parallel num_threads(k)
+    for(size_t i = 0; i < numClusters; ++i)
     {
-	#ifdef DEBUG
-		std::cout << "N threads : [" << omp_get_num_threads() << "]\n"; 
-	#endif
-    #pragma omp for 
-    for(size_t i = 0; i < k; i++){
-        centroids.push_back(p->at(rand() % p->size()));
+        clusters.push_back(Cluster()); 
+    }
+    // clusters.reserve(numClusters);
+
+    if (!pts || pts->empty()) 
+    {
+        std::cerr << "Error: Null or empty vector passed to constructor." << std::endl;
+        return;
     }
 
+    std::srand(time(nullptr));
+    // clusters.resize(numClusters, Cluster()); // segfault
+    
+    // for(size_t i = 0; i < numClusters; ++i)
+    // {
+    //     clusters.push_back(Cluster(i, std::make_shared<std::vector<Point>>()));
+    // }
+
+    // random assign
+    int selection = pts->size() / numClusters;
+    
+    if (selection == 0) 
+    {
+        std::cerr << "Error: Not enough points for the number of clusters." << std::endl;
+        return;
+    }
+    std::cout << "Cluster size: " << clusters.size() << std::endl;
+    std::cout << "Selection: " << selection  << "num pts :" << pts->size() << std::endl;
+    for(size_t i = 0; i < clusters.size(); ++i)
+    {
+        Cluster& currentCluster = clusters.at(i);
+        std::cout << currentCluster.getCentroid() << std::endl;
+
+        // for(size_t j = 0; j < pts->size(); ++j)
+        // {
+        //     if (j / selection < clusters.size())
+        //     {
+        //         // clusters.push_back(Cluster(i, {})); // segfalt
+        //         currentCluster.assign(&(pts->at(j / selection)));
+        //         std::cout << "Assigned point " << j << " to cluster " << i << std::endl;
+        //     }
+        //     else
+        //     {
+        //         std::cerr << "Error: Index out of bounds." << std::endl;
+        //         return;
+        //     }
+        // }
+        // clusters.at(i).computeCentroid();
+    }
+}
+
+void KMeans::computeCentroids()
+{
+    // #pragma omp parallel for
+    std::cout << "Cluster size " << clusters.size() << std::endl;
+    for(size_t i = 0; i < clusters.size(); ++i)
+    {
+        clusters.at(i).computeCentroid();
+        std::cout << "Centroid " << i << std::endl;
+    }
+}
+
+
+
+void KMeans::assign()
+{
+    // #pragma omp parallel for
+    for(size_t i = 0; i < pts->size(); ++i)
+    {
+        for(size_t j = 0; j < clusters.size(); ++j)
+        {
+            double dist = pts->at(i).dist(clusters.at(j).getCentroid());
+
+            if(dist < pts->at(i).getDist())
+                clusters.at(j).assign(&pts->at(i));
+        }   
+    }
+}
+
+
+void KMeans::write(std::string path)
+{
+    std::ofstream file;
+    file.open(path);
+
+    for(size_t i = 0; i < clusters.size(); ++i)
+    {
+        file << clusters.at(i).getCentroid() << "," << std::endl;
+    }
+    file.close();
+}
+
+void KMeans::clearClusters()
+{
+    for(size_t i = 0; i < clusters.size(); ++i)
+    {
+        clusters.at(i).clear();
+    }
+}
+
+void KMeans::run()
+{
     for(size_t it = 0; it < epochs; ++it)
     {
-
-        #ifdef DEBUG
-        std::cout << "epoch - " << it << "/" << epochs << std::endl; 
-        #endif
-
-        // assign pts to a cluster
-		size_t j;
-        #pragma omp for private(j) 
-        for(size_t i = 0; i < centroids.size(); ++i)
-        {
-
-            #ifdef DEBUG
-            std::cout<<"centroid N: [" << i << "]" << std::endl; 
-            #endif
-
-            for(size_t j = 0;j < p->size(); ++j)
-            {
-                #ifdef DEBUG
-                std::cout<<"Point N: [" << j << "]" << std::endl; 
-                #endif
-                double dist = p->at(j).dist(centroids.at(i));
-                if(dist < p->at(j).getMinDist()){
-                    p->at(j).setMinDist(dist);
-                    p->at(j).K(i);
-                    #ifdef DEBUG
-                    std::cout<<"Point N: [" << j  << "] "<< "re-assigned at K: [" << p->at(j).getK() << "]" <<std::endl; 
-                    #endif
-                }
-            }
-        }
-        // new centroids 
-        #pragma omp for
-        for(size_t i = 0; i < p->size(); ++i)
-        {
-            size_t id = p->at(i).K();
-            #pragma omp atomic
-            npts[id]++;
-            #pragma omp atomic
-            sx[id] += p->at(i).X();
-            #pragma omp atomic
-            sy[id] += p->at(i).Y();
-            #pragma omp atomic
-            sz[id] += p->at(i).Z();
-            p->at(i).setMinDist(__DBL_MAX__); // reset
-        }
-
-        //compute new centroids
-		omp_set_num_threads(centroids.size());
-		int cthreads = omp_get_num_threads();
+        std::cout<< "Epoch: " << it  << "/" << epochs << std::endl;
         
-		#ifdef DEBUG
-		std::cout << "N cthreads : [" << cthreads << std::cout << "]\n";
-		#endif
-
-		#pragma omp for 
-        for(size_t i = 0;i < centroids.size(); ++i)
-        {
-            centroids.at(i).X(sx[i] / npts[i]);
-            centroids.at(i).Y(sy[i] / npts[i]);
-            centroids.at(i).Z(sz[i] / npts[i]);
-            centroids.at(i).K(i);
-        }
+        assign();
+        computeCentroids();
+        clearClusters();
     }
-    }
-    writeCsv(&centroids, "data/centroids.csv");
+    write("../data/centroids.csv");
 }
+
