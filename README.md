@@ -17,10 +17,3 @@ make
 ```shell
 ./bin/K-means3D <dataset path> <N epochs> <K clusters>
 ```
-
-### TODO LIST
-- [x] ⚠️ **IMPORTANT** fix centroids problems and output data (found some algorithm bug 🥲)
-- [x] code time / performances 
-- [ ] convergence 
-- [ ] more effective cluster init [resource](https://towardsdatascience.com/an-approach-for-choosing-number-of-clusters-for-k-means-c28e614ecb2c)
-- [x] parallel (OpenMP) 👀

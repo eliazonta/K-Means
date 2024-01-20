@@ -5,25 +5,22 @@
 #include <vector>
 #include <memory>
 #include <iostream> // debug
+#include <limits>
+#include <tuple>
+#include <algorithm>
 
 #include "point.h"
-#include "cluster.h"
-#include "readWrite.h"
+#include "utils.h"
 
 class KMeans{
 private:
-    int numClusters = 1, epochs;
-    std::shared_ptr<std::vector<Point>> pts; // Points
-    std::vector<Cluster> clusters; // clusters.size = numClusters
-    std::vector<int> prova;
-    // void assign();
-    void clearClusters();
-    void computeCentroids();
-    void write(std::string path);
-
+    static double costFunction(const std::vector<Observation> &points, const std::vector<Observation> &centroids);
+    static void assignCluster(Observation &point, const std::vector<Observation> &centroids);
+    static void updateCentroids(const std::vector<Observation> &initPoints, std::vector<Observation> &centroids);
+    
+    // void write(std::string path);
 public:
-    KMeans(std::shared_ptr<std::vector<Point>> p, int _epochs, int _clusters);
-    void run();
+    static ObservationsWithIterations fit(std::vector<Observation> &initPoints, unsigned int k, double tolerance = .0001, int maxIteration = 500);
 };
 
 

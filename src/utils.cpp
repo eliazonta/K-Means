@@ -1,6 +1,6 @@
-#include "../include/readWrite.h"
+#include "../include/utils.h"
 
-std::vector<Point> readCsv(std::string path)
+std::vector<Point> Utils::readCsv(std::string path)
 {
     std::vector<Point> points;
     std::ifstream file(path);
@@ -32,14 +32,15 @@ std::vector<Point> readCsv(std::string path)
         }
         int pid = lineCount++;
         // Create a Point object and add it to the vector
-        points.emplace_back(pid, features);
+        // points.emplace_back(pid, features);
+        points.emplace_back(features.at(0), features.at(1)); // for x,y coords
     }
 
     file.close();
     return points;
 }
 
-void writeCsv(std::vector<Point>* p, std::string path)
+void Utils::writeCsv(const std::vector<Observation>& p, const std::string path)
 {
     std::ofstream file;
     file.open(path);
@@ -50,13 +51,10 @@ void writeCsv(std::vector<Point>* p, std::string path)
     }
     std::cout<< "Writing to file " << path << std::endl;
     
-    for (std::vector<Point>::iterator it = p->begin(); it != p->end(); ++it) 
+    for(size_t i = 0; i < p.size(); ++i)
     {
-        for(size_t i = 0; i < it->getFeatures().size(); ++i)
-        {
-            file << it->getFeatures()[i] << ", ";
-        }
-        file << it->getCluster() << std::endl;
+        file << p.at(i).X() << ", " << p.at(i).Y() << ", ";
+        file << p.at(i).getClusterID() << std::endl;
     }
     file.close();
 }

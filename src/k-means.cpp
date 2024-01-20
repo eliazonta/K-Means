@@ -10,117 +10,94 @@
 */
 
 #include "../include/k-means.h"
-#include <omp.h>
+// #include <omp.h>
 // #define DEBUG
 
-
-KMeans::KMeans(std::shared_ptr<std::vector<Point>> p, int _epochs, int _clusters):
-    pts(p), epochs(_epochs), numClusters(_clusters), clusters(_clusters)
+double KMeans::costFunction(const std::vector<Observation> &points, const std::vector<Observation> &centroids)
 {
-    std::cout << "Constructor called" << std::endl;
-    // std::srand(time(nullptr));
-    // std::random_shuffle(pts->begin(), pts->end());
+    double totdist = 0;
+// #pragma omp parallel for reduction(+ : totdist)
+    for (const auto &p : points)
+        for (const auto &c : centroids)
+            totdist += Point::distance(p, c);
+    return totdist;
+}
 
+void KMeans::assignCluster(Observation &point, const std::vector<Observation> &centroids)
+{
+    double dist = std::numeric_limits<double>::max();
+    for (const auto &centroid : centroids)
+    {
+        const auto newDist = Point::distance(point.getPoint(), centroid.getPoint());
+        if (newDist < dist)
+        {
+            point.setClusterID(centroid.getClusterID());
+            dist = newDist;
+        }
+    }
+}
 
-    // for(size_t i = 0; i < pts->size(); ++i)
-    // {
-    //     std::cout<< pts->at(i) << std::endl;
-    // }
+void KMeans::updateCentroids(const std::vector<Observation> &initPoints, std::vector<Observation> &centroids)
+{
+#pragma omp parallel for
+    for (auto &centroid : centroids)
+    {
+        double x = 0, y = 0;
+        int counter = 0;
+#pragma omp parallel for default(shared) reduction(+ \
+                                                   : x, y, counter)
+        for (const auto &p : initPoints)
+        {
+            if (p.getClusterID() == centroid.getClusterID())
+            {
+                x += p.X();
+                y += p.Y();
+                ++counter;
+            }
+        }
+        if (counter > 0)
+        {
+            x /= counter;
+            y /= counter;
+            centroid.X(x);
+            centroid.Y(y);
+        }
+    }
+}
+
+ObservationsWithIterations KMeans::fit(std::vector<Observation> &initPoints, unsigned int k, double tolerance, int maxIteration)
+{   
+    srand(time(NULL));
+    std::vector<Observation> centroids;
+    std::vector<int> positions(initPoints.size());
+    std::iota(positions.begin(), positions.end(), 0);
+    std::shuffle(positions.begin(), positions.end(), [](int i) { return rand() % i; });
+
     
-    if (!pts || pts->empty()) 
+    for (unsigned int i = 0; i < k; ++i)
     {
-        std::cerr << "Error: Null or empty vector passed to constructor." << std::endl;
-        return;
+        const auto point = initPoints.at(positions.at(i)).getPoint();
+        centroids.emplace_back(Observation(point.X(), point.Y(), i));
     }
 
-    
-    // for(size_t i = 0; i < numClusters; ++i)
-    // {
-    //     clusters.push_back(Cluster(i, std::make_shared<std::vector<Point>>()));
-    // }
-
-    // random assign
-    
-    // int selection = pts->size() / numClusters;
-    
-    // if (selection == 0) 
-    // {
-    //     std::cerr << "Error: Not enough points for the number of clusters." << std::endl;
-    //     return;
-    // }
-    int cl;
-    // #pragma omp parallel for
-    std::cout<< "Size of points: " << pts->size() << std::endl;
-    for(size_t i = 0; i < pts->size(); ++i)
+    for (int i = 0; i < maxIteration; ++i)
     {
-        cl = random() % numClusters;
-        std::cout << "Point " << i << " assigned to cluster " << cl << std::endl;
-        // clusters.at(cl).assign(pts, i);
-        pts->at(i).setCluster(cl);
-    }
-    // clusters.at(i).computeCentroid();
-}
+        double costOld = costFunction(initPoints, centroids);
+// #pragma omp parallel for
+        for (auto &point : initPoints)
+            assignCluster(point, centroids);
 
-void KMeans::computeCentroids()
-{
-    // #pragma omp parallel for
-    std::cout << "Centroids computing... \n Cluster size " << clusters.size() << std::endl;
-    for(size_t i = 0; i < clusters.size(); ++i)
-    {
-        clusters.at(i).computeCentroid();
-        std::cout << "Centroid " << i << std::endl;
+        updateCentroids(initPoints, centroids);
+
+        double costNew = costFunction(initPoints, centroids);
+        if (std::abs(costOld - costNew) < tolerance)
+        {
+            // std::cout << "EPOCH: " << i << "/ " << maxIteration <<  '\n';
+            return std::make_pair(centroids, i);
+        }
     }
+    return std::make_pair(centroids, maxIteration);
 }
 
 
-
-// void KMeans::assign()
-// {
-//     // #pragma omp parallel for
-//     for(size_t i = 0; i < pts->size(); ++i)
-//     {
-//         for(size_t j = 0; j < clusters.size(); ++j)
-//         {
-//             double dist = pts->at(i).dist(clusters.at(j).getCentroid());
-
-//             if(dist < pts->at(i).getDist())
-//                 // clusters.at(j).assign(pts->at(i));
-//                 pts->at(i).setCluster(j);
-//         }   
-//     }
-// }
-
-
-void KMeans::write(std::string path)
-{
-    std::ofstream file;
-    file.open(path);
-
-    for(size_t i = 0; i < clusters.size(); ++i)
-    {
-        file << clusters.at(i).getCentroid() << "," << std::endl;
-    }
-    file.close();
-}
-
-void KMeans::clearClusters()
-{
-    for(size_t i = 0; i < clusters.size(); ++i)
-    {
-        clusters.at(i).clear();
-    }
-}
-
-void KMeans::run()
-{
-    for(size_t it = 0; it < epochs; ++it)
-    {
-        std::cout<< "Epoch: " << it  << "/" << epochs << std::endl;
-        
-        // assign();
-        computeCentroids();
-        clearClusters();
-    }
-    write("../data/centroids.csv");
-}
 

@@ -2,39 +2,33 @@
 
 #include "../include/point.h"
 
-Point::Point():
-    pointID(-1), clusterID(-1), distance(__DBL_MAX__){}
+Point::Point() : x(0), y(0) {}
 
-Point::Point(int cid):
-    pointID(cid), clusterID(cid), distance(__DBL_MAX__){}
+Point::Point(double x, double y) : x(x), y(y) {}
 
-Point::Point(int pid, std::vector<double> f):
-    pointID(pid), clusterID(-1), distance(__DBL_MAX__), features(f), dimensions(f.size()){}
+Point::Point(const Point& p): x(p.x), y(p.y) {}
 
-Point::Point(const Point& p):
-    pointID(p.pointID), clusterID(p.clusterID), distance(p.distance), features(p.features), dimensions(p.dimensions){}
-
-double Point::dist(Point p)
+double Point::distance(const Point &p1, const Point &p2)
 {
-    // Euclidean distance
-    double sum = 0.0;
-    for(size_t i = 0; i < features.size(); ++i)
-    {
-        sum += pow(this->features.at(i) - p.features.at(i), 2);
-    }
-    return sqrt(sum);
+    const auto x = p1.X() - p2.Y();
+    const auto y = p1.X() - p2.Y();
+    return std::sqrt(std::pow(x, 2) + std::pow(y, 2));
 }
 
-std::ostream& operator<<(std::ostream& os, const Point p)
+// double Point::distance(const Point &p1, const Point &p2)
+// {
+//     // Euclidean distance
+//     double sum = 0.0;
+//     for (const auto &f : p1.features.size() - 1)
+//     {
+//         sum += pow(p1.features.at(i) - p2.features.at(i), 2);
+//     }
+//     return std::sqrt(sum);
+// }
+
+
+std::ostream &operator<<(std::ostream &os, const Observation &ob)
 {
-    os << "Point " << p.pointID << ":\n";
-    os << "Cluster: " << p.clusterID << "\n";
-    os << "Distance: " << p.distance << "\n";
-    os << "Features: ";
-    for(size_t i = 0; i < p.features.size(); ++i)
-    {
-        os << p.features.at(i) << " ";
-    }
-    os << "\n";
+    os << "[" << ob.X() << "," << ob.Y() << "]  id = " << ob.getClusterID();
     return os;
 }

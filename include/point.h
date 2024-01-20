@@ -6,30 +6,43 @@
 #include <vector>
 #include <iostream>
 
-class Point{
+class Point
+{
 private:
-    int pointID, clusterID, dimensions;
-    double distance; // distance from centroid
-    std::vector<double> features; // point features [features.size = dimensions]
+    double x, y;
+    // std::vector<double> features; // point features [features.size = dimensions]
     
 public:
     Point();
-    Point(int pid);
-    Point(int pid, std::vector<double> f);
+    Point(double x, double y);
+    // Point(std::vector<double> &f);
     Point(const Point& p);
 
-    int getID(){return pointID;}
-    int getCluster(){return clusterID;}
-    double getDist(){return distance;}
-    double getDimensions(){return dimensions;}
-    std::vector<double> getFeatures(){return features;}
+    double X() const {return x;}
+    double Y() const {return y;}
 
-    void setID(int pid){pointID = pid;}
-    void setCluster(int cid){clusterID = cid;}
-    void setDist(double dist){distance = dist;}
+    void X(double nx) { x = nx; }
+    void Y(double ny) { y = ny; }
 
-    double dist(Point p);
-    friend std::ostream& operator<<(std::ostream &os, const Point p);
+    static double distance(const Point &p1, const Point &p2);
 };
+
+class Observation : public Point
+{
+    int clusterID;
+
+public:
+    Observation(double, double, int);
+    Observation() : Point(), clusterID(-1){};
+
+    void setClusterID(int id) { clusterID = id; }
+
+    int getClusterID() const { return clusterID; }
+    Point getPoint() const { return Point(X(), Y()); }
+    
+    friend std::ostream &operator<<(std::ostream &os, const Observation &observation);
+};
+
+using ObservationsWithIterations = std::pair<std::vector<Observation>, int>;
 
 #endif // __POINT_H__
