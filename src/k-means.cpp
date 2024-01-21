@@ -4,7 +4,7 @@
     - random centroids init
 
     for e in EPOCHS
-        - assign points to clusters 
+        assign points to clusters 
         compute centrods for each cluster
         update centroids 
 */
@@ -44,8 +44,7 @@ void KMeans::updateCentroids(const std::vector<Observation> &initPoints, std::ve
     {
         double x = 0, y = 0;
         int counter = 0;
-#pragma omp parallel for default(shared) reduction(+ \
-                                                   : x, y, counter)
+#pragma omp parallel for default(shared) reduction(+ : x, y, counter)
         for (const auto &p : initPoints)
         {
             if (p.getClusterID() == centroid.getClusterID())

@@ -23,8 +23,8 @@ using steady_clock = std::chrono::steady_clock;
 template <class T>
 struct is_duration : std::false_type{};
 
-template <class Rep, class Period>
-struct is_duration<std::chrono::duration<Rep, Period>> : std::true_type{};
+template <class R, class P>
+struct is_duration<std::chrono::duration<R, P>> : std::true_type{};
 
 template <typename T>
 struct measure

@@ -12,7 +12,8 @@
 #include "point.h"
 #include "utils.h"
 
-class KMeans{
+class KMeans
+{
 private:
     static double costFunction(const std::vector<Observation> &points, const std::vector<Observation> &centroids);
     static void assignCluster(Observation &point, const std::vector<Observation> &centroids);
