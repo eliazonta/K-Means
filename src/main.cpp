@@ -12,25 +12,22 @@
 
 int main(int argc, char** argv)
 {
-    if(argc != 4){
-        std::cout << "Usage " << argv[0] << " <dataset path> <N epochs> <K clusters>" << std::endl;
-        exit(-1);
+    if(argc != 3){
+        std::cout << "Usage " << argv[0] << " <dataset path> <K clusters>" << std::endl;
+        return EXIT_FAILURE;
     }else
     {
-        std::string path = "../data/UnDefined.csv"; //argv[1];
-        std::vector<Point> points = Utils::readCsv(path);
+        std::string path = argv[1];
+        auto points = Utils::readCsv(path);
 
-        // auto pts_ptr = std::make_shared<std::vector<Point>>(points);
-
-        
-
-        const auto clusters = atoi(argv[3]);
+        const auto clusters = atoi(argv[2]);
     
         constexpr double tolerance = 0.001;
-        constexpr int epochs = 1000;
+        constexpr unsigned int epochs = 1000;
 
 
 #if SHOW_DETAILS
+        std::cout << "Points number: " << points.size() << std::endl;
         const auto observationWithIteration = KMeans::fit(points, clusters, tolerance, epochs);
         const auto centroids = std::get<0>(observationWithIteration);
         for (auto &c : centroids)
@@ -41,7 +38,7 @@ int main(int argc, char** argv)
                                   .count();
         std::cout << static_cast<double>(elapsed) / 1000 << std::endl;
 
-        std::cout << "Done." << std::endl;
+        std::cout << "Done.\n Exiting..." << std::endl;
 
         // Utils::writeCsv(pts_ptr.get(), "../data/out.csv");
     }

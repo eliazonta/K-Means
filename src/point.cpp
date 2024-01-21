@@ -26,6 +26,7 @@ double Point::distance(const Point &p1, const Point &p2)
 //     return std::sqrt(sum);
 // }
 
+Observation::Observation(double x, double y, int k) : Point(x, y), clusterID(k) {}
 
 std::ostream &operator<<(std::ostream &os, const Observation &ob)
 {

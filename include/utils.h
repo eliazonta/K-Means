@@ -39,14 +39,15 @@ struct measure
     {
         const auto start = steady_clock::now();
         const auto result = std::forward<F>(func)(std::forward<Args>(args)...);
-        const auto iteration = std::get<1>(result); // number of iteration
+        const int iteration = 0; // default value for iteration
         return std::make_pair(std::chrono::duration_cast<T>(steady_clock::now() - start), iteration);
     }
 };
 
+
 namespace Utils
 {
-    std::vector<Point> readCsv(std::string path);
+    std::vector<Observation> readCsv(std::string path);
 
     void writeCsv(const std::vector<Observation>& p, const std::string path);
 

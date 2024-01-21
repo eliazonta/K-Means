@@ -8,6 +8,8 @@
 #include <limits>
 #include <tuple>
 #include <algorithm>
+#include <random>
+#include <ctime>
 
 #include "point.h"
 #include "utils.h"

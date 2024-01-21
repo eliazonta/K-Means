@@ -1,8 +1,8 @@
 #include "../include/utils.h"
 
-std::vector<Point> Utils::readCsv(std::string path)
+std::vector<Observation> Utils::readCsv(std::string path)
 {
-    std::vector<Point> points;
+    std::vector<Observation> points;
     std::ifstream file(path);
     
 
@@ -13,7 +13,7 @@ std::vector<Point> Utils::readCsv(std::string path)
     }
 
     std::string line;
-    int lineCount = 0;
+    // int lineCount = 0;
 
     while(getline(file, line))
     {
@@ -30,10 +30,10 @@ std::vector<Point> Utils::readCsv(std::string path)
         {
             features.push_back(std::stod(tokens[i]));
         }
-        int pid = lineCount++;
-        // Create a Point object and add it to the vector
+        // int pid = lineCount++;
+        // Create a Observation object and add it to the vector
         // points.emplace_back(pid, features);
-        points.emplace_back(features.at(0), features.at(1)); // for x,y coords
+        points.emplace_back(features.at(0), features.at(1), -1); // for x,y coords
     }
 
     file.close();

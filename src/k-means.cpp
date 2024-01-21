@@ -66,11 +66,11 @@ void KMeans::updateCentroids(const std::vector<Observation> &initPoints, std::ve
 
 ObservationsWithIterations KMeans::fit(std::vector<Observation> &initPoints, unsigned int k, double tolerance, int maxIteration)
 {   
-    srand(time(NULL));
+    std::mt19937 generator(std::time(0));
     std::vector<Observation> centroids;
     std::vector<int> positions(initPoints.size());
     std::iota(positions.begin(), positions.end(), 0);
-    std::shuffle(positions.begin(), positions.end(), [](int i) { return rand() % i; });
+    std::shuffle(positions.begin(), positions.end(), generator);
 
     
     for (unsigned int i = 0; i < k; ++i)
