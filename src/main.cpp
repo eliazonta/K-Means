@@ -31,7 +31,7 @@ int main(int argc, char** argv)
         const auto observationWithIteration = KMeans::fit(points, clusters, tolerance, epochs);
         const auto centroids = std::get<0>(observationWithIteration);
         for (auto &c : centroids)
-            std::cout << c.getX() << " " << c.getY() << '\n';
+            std::cout << c.X() << " " << c.Y() << '\n';
 #endif
         const auto elapsed = measure<micros>::measure_time(KMeans::fit, points, clusters, tolerance, epochs)
                                   .first
