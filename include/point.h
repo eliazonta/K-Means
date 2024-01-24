@@ -1,29 +1,48 @@
+#pragma once
 #ifndef __POINT_H__
 #define __POINT_H__
-#include <math.h>
 
-class Point{
+#include <math.h>
+#include <vector>
+#include <iostream>
+
+class Point
+{
 private:
-    double x, y, z;
-    int k;
-    double minDist;
+    double x, y;
+    // std::vector<double> features; // point features [features.size = dimensions]
+    
 public:
     Point();
-    Point(double x, double y, double z);
+    Point(double x, double y);
+    // Point(std::vector<double> &f);
+    Point(const Point& p);
 
-    double X();
-    double Y();
-    double Z();
-    int K();
-    double getMinDist();
+    double X() const {return x;}
+    double Y() const {return y;}
 
-    void X(int _x);
-    void Y(int _y);
-    void Z(int _z);
-    void K(int _k);
-    void setMinDist(double md);
-    
-    double dist(Point p);
+    void X(double nx) { x = nx; }
+    void Y(double ny) { y = ny; }
+
+    static double distance(const Point &p1, const Point &p2);
 };
 
-#endif
+class Observation : public Point
+{
+    int clusterID;
+
+public:
+    Observation(double, double, int);
+    Observation() : Point(), clusterID(-1){};
+
+    void setClusterID(int id) { clusterID = id; }
+
+    int getClusterID() const { return clusterID; }
+    Point getPoint() const { return Point(X(), Y()); }
+    
+    friend std::ostream &operator<<(std::ostream &os, const Observation &observation);
+};
+
+using ObservationsWithIterations = std::pair<std::vector<Observation>, int>;
+
+#endif // __POINT_H__

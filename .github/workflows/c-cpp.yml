@@ -26,4 +26,4 @@ jobs:
         echo OMP_DYNAMIC:$OMP_DYNAMIC
         echo OMP_NESTED:$OMP_NESTED
         make 
-        ldd ./bin/K-Means3D 
+        ldd ./bin/K-Means
