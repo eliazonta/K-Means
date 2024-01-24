@@ -38,7 +38,7 @@ int main(int argc, char** argv)
                                   .count();
         std::cout << static_cast<double>(elapsed) / 1000 << std::endl;
 
-        std::cout << "Done.\n Exiting..." << std::endl;
+        std::cout << "Done.\nExiting..." << std::endl;
 
         // Utils::writeCsv(pts_ptr.get(), "../data/out.csv");
     }

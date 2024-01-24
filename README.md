@@ -15,5 +15,5 @@ The problem is computationally difficult *(NP-hard)*; however, efficient heurist
 make
 ```
 ```shell
-./bin/K-means3D <dataset path> <N epochs> <K clusters>
+./bin/K-Means <dataset path> <N epochs> <K clusters>
 ```
