@@ -1,0 +1,3 @@
+[submodule "distributed"]
+	path = distributed
+	url = https://github.com/AlphaNightLight/parallel_k_means.git

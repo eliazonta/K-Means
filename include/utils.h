@@ -17,6 +17,7 @@
 
 using millis = std::chrono::milliseconds;
 using micros = std::chrono::microseconds;
+using nanos = std::chrono::nanoseconds;
 using steady_clock = std::chrono::steady_clock;
 
 
